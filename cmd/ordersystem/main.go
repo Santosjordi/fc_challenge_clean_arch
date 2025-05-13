@@ -45,8 +45,12 @@ func main() {
 	createOrderUseCase := NewCreateOrderUseCase(db, eventDispatcher)
 
 	webserver := webserver.NewWebServer(configs.WebServerPort)
+	// Handler registration
+	listOrdersHandler := NewListOrdersHandler(db)
 	webOrderHandler := NewWebOrderHandler(db, eventDispatcher)
+
 	webserver.AddHandler("/order", webOrderHandler.Create)
+	webserver.AddHandler("/orders", listOrdersHandler.ListOrders)
 	fmt.Println("Starting web server on port", configs.WebServerPort)
 	go webserver.Start()
 
