@@ -1,6 +1,6 @@
 # Desafio
 implementar listagem de ordens nos serviços
-- [ ] Webserver http
+- [x] Webserver http
 - [ ] Endpoint GraphQL
 - [ ] Query no gRPC
 
