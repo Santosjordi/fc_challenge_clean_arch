@@ -1,102 +1,56 @@
-# Desafio
-implementar listagem de ordens nos serviços
-- [x] Webserver http
-- [ ] Endpoint GraphQL
-- [ ] Query no gRPC
+Para este desafio, você precisará criar o usecase de listagem das orders.
+Esta listagem precisa ser feita com:
+- [X] Endpoint REST (GET /order)
+- [x] Service ListOrders com GRPC
+- [x] Query ListOrders GraphQL
+
+- [x] Não esqueça de criar as migrações necessárias.
+- [X] arquivo api.http com a request para criar e listar as orders.
+
+- [X] Para a criação do banco de dados, utilize o Docker (Dockerfile / docker-compose.yaml), com isso ao rodar o comando docker compose up tudo deverá subir, preparando o banco de dados.
+- [X] Inclua um README.md com os passos a serem executados no desafio e a porta em que a aplicação deverá responder em cada serviço.
 
 ---
 
-# 🧙‍♂️ Clean Architecture Challenge
+# Project Setup
 
-Welcome to the Clean Architecture Challenge! This project demonstrates a layered architecture in Go, utilizing tools like Wire for dependency injection, and supports multiple interfaces: REST, gRPC, and GraphQL.
+1. Install required tools:
+   - Go 1.21 or later
+   - Docker and Docker Compose
+   - Protocol Buffers compiler (protoc)
 
-## 📦 Project Structure
-
-```
-fc_challenge_clean_arch/
-├── cmd/
-│   └── ordersystem/       # Main application entry point
-├── internal/
-│   ├── entity/            # Domain entities
-│   ├── usecase/           # Business logic
-│   ├── infra/             # Infrastructure (DB, web, gRPC)
-│   ├── web/               # Web handlers
-│   └── event/             # Event handling
-├── pkg/                   # Shared packages
-├── configs/               # Configuration files
-├── go.mod                 # Go module definition
-├── Makefile               # Build and run commands
-└── README.md              # Project documentation
+2. Create the `.env` file in `cmd/ordersystem/` with the following content:
+```env
+DB_DRIVER=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=root
+DB_NAME=orders
+WEB_SERVER_PORT=8000
+GRPC_SERVER_PORT=50051
+GRAPHQL_SERVER_PORT=8080
 ```
 
-## 🚀 Getting Started
-
-### 1. Clone the Repository
-
+3. Start the infrastructure:
 ```bash
-git clone https://github.com/Santosjordi/fc_challenge_clean_arch.git
-cd fc_challenge_clean_arch
+docker compose up -d
 ```
 
-### 2. Configure the Application
-
-Ensure you have a `.env` file or set the necessary environment variables as defined in `configs/config.go`.
-
-### 3. Install Dependencies
-
+4. Run database migrations:
 ```bash
-go mod tidy
+migrate -path=internal/infra/database/migrations -database "mysql://root:root@tcp(localhost:3306)/orders" up
 ```
 
-### 4. Generate Dependency Injection Code
-
-This project uses [Google Wire](https://github.com/google/wire) for dependency injection. To generate the necessary code:
-
+5. Run the application:
 ```bash
 cd cmd/ordersystem
-wire
-cd ../..
+go run .
 ```
 
-> **Note:** Always run `wire` after modifying any constructor functions or provider sets.
-
-### 5. Build and Run the Application
-
-Use the provided `Makefile` for common tasks:
-
-```bash
-make run
-```
-
-This command compiles and runs all necessary files in the `cmd/ordersystem` directory.
-
-> **Important:** Avoid running `go run main.go` directly, as it won't include other essential files like `wire_gen.go`. Always use `go run .` or `make run`.
-
-### 6. Run Tests
-
-```bash
-make test
-```
-
-## 🛠️ Makefile Commands
-
-* `make run` – Runs the application.
-* `make wire` – Generates dependency injection code.
-* `make build` – Builds the application binary.
-* `make clean` – Cleans up generated files and binaries.
-* `make test` – Runs all tests.
-
-## 🧪 Available Interfaces
-
-* **REST API:** Accessible at `http://localhost:<WebServerPort>/order`
-* **gRPC:** Runs on port `<GRPCServerPort>`
-* **GraphQL Playground:** Accessible at `http://localhost:<GraphQLServerPort>/`
-
-Replace `<WebServerPort>`, `<GRPCServerPort>`, and `<GraphQLServerPort>` with the actual ports defined in your configuration.
-
-## 🐛 Troubleshooting
-
-* **Undefined functions like `InitializeCreateOrderUseCase`:** Ensure you've run `wire` to generate the necessary code.
-* **Errors when running `go run main.go`:** Use `go run .` or `make run` instead to include all required files.
-
----
+## Services Ports
+- REST API: 8000
+- gRPC: 50051
+- GraphQL: 8080
+- MySQL: 3306
+- RabbitMQ: 5672 (AMQP), 15672 (Management UI)

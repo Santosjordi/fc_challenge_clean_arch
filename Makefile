@@ -1,33 +1,23 @@
-PROTO_DIR=internal/infra/grpc/protofiles
-PB_OUT_DIR=.
+.PHONY: setup build run
 
-proto:
-	protoc --go_out=$(PB_OUT_DIR) --go-grpc_out=$(PB_OUT_DIR) $(PROTO_DIR)/*.proto
+setup: mysql-ready go-mod-download migrate-db
 
-# Makefile for fc_challenge_clean_arch
+mysql-ready:
+	@echo "Waiting for MySQL to be ready..."
+	docker exec mysql sh -c 'until mysql -hlocalhost -uroot -proot -e "SELECT 1"; do sleep 1; done'
+	@echo "MySQL is ready!"
 
-# Change this if your main package is elsewhere
-CMD_DIR=./cmd/ordersystem
+go-mod-download:
+	go mod download
 
-.PHONY: run wire build clean test
+migrate-db:
+	migrate -path=internal/infra/database/migrations -database "mysql://root:root@tcp(localhost:3306)/orders" up
 
-## Run the application (all files in CMD_DIR)
-run:
-	go run $(CMD_DIR)
-
-## Generate dependency injection code using Wire
-wire:
-	cd $(CMD_DIR) && wire
-
-## Build the binary
+# This doesn't work and I can't figure out why
 build:
-	go build -o bin/ordersystem $(CMD_DIR)
+	mkdir -p bin
+	cp cmd/ordersystem/.env bin/.env
+	go build -o bin/ordersystem ./cmd/ordersystem/...
 
-## Clean build cache and binaries
-clean:
-	go clean -cache
-	rm -rf bin
-
-## Run tests (you can filter by directory or tags)
-test:
-	go test ./...
+run: setup build
+	./bin/ordersystem
