@@ -1,4 +1,14 @@
 services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+      - "8080:8080"
+      - "50051:50051"
+    depends_on:
+      - mysql
+      - rabbitmq
+
   mysql:
     image: mysql:5.7
     container_name: mysql
