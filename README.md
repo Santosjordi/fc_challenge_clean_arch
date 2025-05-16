@@ -1,56 +1,72 @@
 Para este desafio, você precisará criar o usecase de listagem das orders.
-Esta listagem precisa ser feita com:
-- [X] Endpoint REST (GET /order)
-- [x] Service ListOrders com GRPC
-- [x] Query ListOrders GraphQL
+## Requisitos e Execução
 
-- [x] Não esqueça de criar as migrações necessárias.
-- [X] arquivo api.http com a request para criar e listar as orders.
+### Ferramentas Necessárias
 
-- [X] Para a criação do banco de dados, utilize o Docker (Dockerfile / docker-compose.yaml), com isso ao rodar o comando docker compose up tudo deverá subir, preparando o banco de dados.
-- [X] Inclua um README.md com os passos a serem executados no desafio e a porta em que a aplicação deverá responder em cada serviço.
+- **Go** 1.21 ou superior
+- **Docker** e **Docker Compose**
+- **WSL** ou **Linux**
+
+### Configuração do Ambiente
+
+1. Crie o arquivo `.env` no root (ajuste conforme necessário):
+
+   ```bash
+   echo "
+   DB_DRIVER=mysql
+   DB_HOST=localhost
+   DB_PORT=3306
+   DB_USER=root
+   DB_PASSWORD=root
+   DB_NAME=orders
+   WEB_SERVER_PORT=8000
+   GRPC_SERVER_PORT=50051
+   GRAPHQL_SERVER_PORT=8080
+   " > .env
+
+   2. Inicie toda a infraestrutura, execute as migrações e inicie o container da aplicação (tudo em um único comando):
+
+      ```bash
+      docker compose up -d
+      ```
+
+      > **Observação:** O comando acima já executa as migrações do banco de dados e inicia o container da aplicação automaticamente. Não é necessário rodar comandos separados para migração ou inicialização manual da aplicação.
+
+
+### Portas dos Serviços
+
+- **REST API:** `8000`
+- **gRPC:** `50051`
+- **GraphQL:** `8080`
+- **MySQL:** `3306`
+- **RabbitMQ:** `5672` (AMQP), `15672` (UI)
+
+### Exemplos de Requisições
+
+#### REST
+
+```http
+GET http://localhost:8000/order
+```
+
+#### gRPC
+
+Utilize um cliente gRPC para chamar o método `ListOrders` no endereço `localhost:50051`.
+
+#### GraphQL
+
+```graphql
+query {
+  listOrders {
+   id
+   customerName
+   total
+   status
+  }
+}
+```
+Endpoint: `http://localhost:8080/graphql`
 
 ---
 
-# Project Setup
-
-1. Install required tools:
-   - Go 1.21 or later
-   - Docker and Docker Compose
-   - Protocol Buffers compiler (protoc)
-
-2. Create the `.env` file in `cmd/ordersystem/` with the following content:
-```env
-DB_DRIVER=mysql
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=root
-DB_NAME=orders
-WEB_SERVER_PORT=8000
-GRPC_SERVER_PORT=50051
-GRAPHQL_SERVER_PORT=8080
-```
-
-3. Start the infrastructure:
-```bash
-docker compose up -d
-```
-
-4. Run database migrations:
-```bash
-migrate -path=internal/infra/database/migrations -database "mysql://root:root@tcp(localhost:3306)/orders" up
-```
-
-5. Run the application:
-```bash
-cd cmd/ordersystem
-go run .
-```
-
-## Services Ports
-- REST API: 8000
-- gRPC: 50051
-- GraphQL: 8080
-- MySQL: 3306
-- RabbitMQ: 5672 (AMQP), 15672 (Management UI)
+Consulte o arquivo `api.http` para exemplos completos de requisições REST.
