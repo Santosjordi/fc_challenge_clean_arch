@@ -23,14 +23,15 @@ Para este desafio, você precisará criar o usecase de listagem das orders.
    GRPC_SERVER_PORT=50051
    GRAPHQL_SERVER_PORT=8080
    " > .env
+   ```
 
-   2. Inicie toda a infraestrutura, execute as migrações e inicie o container da aplicação (tudo em um único comando):
+2. Inicie toda a infraestrutura, execute as migrações e inicie o container da aplicação (tudo em um único comando):
 
-      ```bash
-      docker compose up -d
-      ```
+   ```bash
+   docker compose up -d
+   ```
 
-      > **Observação:** O comando acima já executa as migrações do banco de dados e inicia o container da aplicação automaticamente. Não é necessário rodar comandos separados para migração ou inicialização manual da aplicação.
+> **Observação:** O comando acima já executa as migrações do banco de dados e inicia o container da aplicação automaticamente. Não é necessário rodar comandos separados para migração ou inicialização manual da aplicação.
 
 
 ### Portas dos Serviços
